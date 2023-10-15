@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Repository\" />
+    <None Remove="Helpers\" />
+    <None Remove="Database\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Repository\" />
+    <Folder Include="Helpers\" />
+    <Folder Include="Database\" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="JsonConverter.Newtonsoft.Json" Version="0.4.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="Dapper" Version="2.1.11" />
+    <PackageReference Include="Microsoft.Data.Sqlite" Version="8.0.0-rc.2.23480.1" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Roulette.Domain\Roulette.Domain.csproj" />
+  </ItemGroup>
+</Project>
