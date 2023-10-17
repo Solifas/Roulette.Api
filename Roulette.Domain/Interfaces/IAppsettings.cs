@@ -1,7 +1,7 @@
 ﻿using System;
 namespace Roulette.Application.Interfaces
 {
-    public interface IAppsettings
+    public interface IAppSettings
     {
         string ConnectionString { get; }
     }

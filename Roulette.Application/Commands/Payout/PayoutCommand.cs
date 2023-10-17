@@ -9,7 +9,7 @@ namespace Roulette.Application.Commands.Payout
     public class PayoutCommand : IRequest<PayoutResponse>
     {
         public Guid BetId { get; set; }
-        public string UserId { get; set; }
+        public string UserName { get; set; }
         public decimal Amount { get; set; }
     }
 }

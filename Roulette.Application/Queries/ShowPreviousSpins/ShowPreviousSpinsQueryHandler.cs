@@ -6,15 +6,31 @@ using System.Threading.Tasks;
 using MediatR;
 using Roulette.Application.Interfaces;
 using Roulette.Domain;
+using Roulette.Domain.Interfaces;
 
 namespace Roulette.Application.Queries.ShowPreviousSpins
 {
-    public class ShowPreviousSpinsQueryHandler : IRequestHandler<GetPreviousSpinsQuery, List<BetType>>
+    public class ShowPreviousSpinsQueryHandler : IRequestHandler<GetPreviousSpinsQuery, IEnumerable<SpinHistory>>
     {
-        private readonly IRepository<BetHistory> _repository;
-        public Task<List<BetType>> Handle(GetPreviousSpinsQuery request, CancellationToken cancellationToken)
+        private readonly IBetEngine _betEngine;
+
+        public ShowPreviousSpinsQueryHandler(IBetEngine betEngine)
         {
-            throw new NotImplementedException();
+            _betEngine = betEngine;
+        }
+
+        public async Task<IEnumerable<SpinHistory>> Handle(GetPreviousSpinsQuery request, CancellationToken cancellationToken)
+        {
+            try
+            {
+                var result = await _betEngine.ShowPreviousSpins();
+            return result;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("There was an error getting the previous spins", ex);
+            }
+            
         }
     }
 }

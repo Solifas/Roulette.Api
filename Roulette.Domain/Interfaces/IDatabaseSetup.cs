@@ -1,8 +1,7 @@
 namespace Roulette.Application.Interfaces
 {
-    public interface IDatabaseBootstrap
+    public interface IDatabaseSetup
     {
         void Setup();
     }
 }
-

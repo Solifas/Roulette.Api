@@ -12,14 +12,15 @@ namespace Roulette.Application
 {
     public class BetEngine : IBetEngine
     {
-        private readonly IRepository<UserAccount> _userRepository;
+        private readonly IRepository<User> _userRepository;
         private readonly IRepository<Bet> _betRepository;
-        private readonly IRepository<BetHistory> _betHistoryRepository;
+        private readonly IRepository<SpinHistory> _spinRepository;
 
-        public BetEngine(IRepository<UserAccount> userRepository, IRepository<Bet> betRepository)
+        public BetEngine(IRepository<User> userRepository, IRepository<Bet> betRepository, IRepository<SpinHistory> spinRepository)
         {
             _userRepository = userRepository;
             _betRepository = betRepository;
+            _spinRepository = spinRepository;
         }
         public decimal CalculatePayout(BetType betType, decimal amount)
         {
@@ -41,7 +42,7 @@ namespace Roulette.Application
             };
         }
 
-        public Bet PlaceBet(BetType betType, string userId, decimal amount) =>
+        public Bet PlaceBet(BetType betType, Guid userId, decimal amount) =>
         new()
         {
             Id = Guid.NewGuid(),
@@ -50,9 +51,10 @@ namespace Roulette.Application
             BetType = betType
         };
 
-        public async Task<List<BetHistory>> ShowPreviousSpins(string userId)
+        public async Task<IEnumerable<SpinHistory>> ShowPreviousSpins()
         {
-            return (await _betHistoryRepository.GetAllAsync("bet")).Where(x => x.UserId == userId).ToList();
+            var getAllBetsHistoryQuery = "SELECT * FROM SpinHistory";
+            return await _spinRepository.GetAllAsync(getAllBetsHistoryQuery);
         }
 
         public async Task<BetType> Spin()
@@ -64,21 +66,35 @@ namespace Roulette.Application
         public async Task UpdateBets(BetType betType)
         {
             var timeOfConclution = DateTime.UtcNow;
-            var bets = (await _betRepository.GetAllAsync("")).Where(x => x.IsBetConcluded == false);
+
+            var getAllUnconcludedBetsQuery = "SELECT * FROM Bets WHERE IsBetConcluded = @IsBetConcluded";
+
+            var bets = await _betRepository.GetAllAsync(getAllUnconcludedBetsQuery);
+
+            if (bets == null) throw new NotFoundException("No bets found");
+
             foreach (var bet in bets)
             {
                 bet.IsBetConcluded = true;
                 bet.IsBetWon = bet.BetType == betType;
                 bet.TimeOfConclution = timeOfConclution;
-                await _betRepository.UpdateAsync("bet");
-            }
-            var userAccounts = (await _userRepository.GetAllAsync("")).Where(x=> x.Bets.Any(y=> y.IsBetWon == true));
 
-            foreach (var userAccount in userAccounts)
+                var betQuery = "UPDATE Bets SET IsBetConcluded = @IsBetConcluded, IsBetWon = @IsBetWon, TimeOfConclution = @TimeOfConclution WHERE Id = @Id";
+                await _betRepository.UpdateAsync(betQuery, bet);
+            }
+
+            var getAllWinningUsersQuery = "SELECT * FROM Users LEFT JOIN Bets ON Users.UserId = Bets.UserId WHERE Bets.IsBetWon = @IsBetWon";
+            var winningUserAccounts = await _userRepository.GetAllAsync(getAllWinningUsersQuery);
+
+            if (winningUserAccounts == null) throw new NotFoundException("No winners found");
+            //bulk edit
+            foreach (var userAccount in winningUserAccounts)
             {
                 var userBets = bets.Where(x => x.UserId == userAccount.UserId && x.TimeOfConclution == timeOfConclution);
                 userAccount.Balance += userBets.Sum(x => CalculatePayout(x.BetType, x.Amount));
-                await _userRepository.UpdateAsync("userAccount");
+
+                var userQuery = "UPDATE Users SET Balance = @Balance WHERE UserId = @UserId";
+                await _userRepository.UpdateAsync(userQuery, userAccount);
             }
         }
     }

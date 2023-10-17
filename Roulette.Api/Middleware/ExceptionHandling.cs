@@ -2,8 +2,8 @@
 using Microsoft.AspNetCore.Http;
 using System.Net;
 using System.Threading.Tasks;
-using Roulette.Application.Exceptions;
 using Newtonsoft.Json;
+using Roulette.Application.Exceptions;
 
 namespace Roulette.Api.Middleware
 {

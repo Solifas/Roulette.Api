@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -9,6 +10,7 @@ using Roulette.Application;
 using Roulette.Application.Interfaces;
 using Roulette.Domain.Interfaces;
 using Roulette.Infrastructure.Database;
+using Roulette.Infrastructure.Helpers;
 using Roulette.Infrastructure.Repository;
 
 namespace Roulette.Api
@@ -25,10 +27,19 @@ namespace Roulette.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            var configuration = new ConfigurationBuilder()
+            .SetBasePath(Directory.GetCurrentDirectory())
+            .AddJsonFile("appsettings.json", optional: false)
+            .Build();
+            var appSettings = new AppSettings();
+            configuration.Bind(appSettings);
+            services.AddSingleton<IAppSettings>(appSettings);
+
             services.AddTransient<IBetEngine, BetEngine>();
             services.AddTransient(typeof(IRepository<>), typeof(BaseRepository<>));
 
-            services.AddSingleton<IDatabaseBootstrap, DatabaseBootstrap>();
+            services.AddSingleton<IDatabaseSetup, DatabaseSetup>();
+            services.AddSingleton<IAppSettings, AppSettings>();
 
             services.AddControllers();
             services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(BetEngine).Assembly));
@@ -49,8 +60,9 @@ namespace Roulette.Api
                 endpoints.MapControllers();
             });
 
-            serviceProvider.GetService<IDatabaseBootstrap>().Setup();
+            serviceProvider.GetService<IDatabaseSetup>().Setup();
         }
     }
 }
 
+Setu

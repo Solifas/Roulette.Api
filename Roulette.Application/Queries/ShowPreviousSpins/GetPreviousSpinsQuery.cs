@@ -7,7 +7,7 @@ using Roulette.Domain;
 
 namespace Roulette.Application.Queries.ShowPreviousSpins
 {
-    public class GetPreviousSpinsQuery : IRequest<List<BetType>>
+    public class GetPreviousSpinsQuery : IRequest<IEnumerable<SpinHistory>>
     {
         public int NumberOfSpins { get; set; }
     }

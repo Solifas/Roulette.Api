@@ -25,15 +25,16 @@ namespace Roulette.Application.Commands.Spin
             try
             {
                 var betType = await _betEngine.Spin();
-
-                _ = _spinHistoryRepository.AddAsync(new SpinHistory
+                var spinHistory = new SpinHistory
                 {
                     BetType = betType,
                     Id = Guid.NewGuid(),
                     SpinDate = DateTime.UtcNow
-                }, "");
+                };
+                string saveSpinQuery = "INSERT INTO SpinHistory (Id, BetType, SpinDate) VALUES (@Id, @BetType, @SpinDate)";
+                _spinHistoryRepository.AddAsync(saveSpinQuery, spinHistory);
 
-                _ = _betEngine.UpdateBets(betType);
+                _betEngine.UpdateBets(betType);
 
                 return betType;
             }
