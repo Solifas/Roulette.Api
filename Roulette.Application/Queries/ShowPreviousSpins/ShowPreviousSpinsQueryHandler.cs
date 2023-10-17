@@ -30,7 +30,6 @@ namespace Roulette.Application.Queries.ShowPreviousSpins
             {
                 throw new Exception("There was an error getting the previous spins", ex);
             }
-
         }
     }
 }

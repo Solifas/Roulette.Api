@@ -4,6 +4,7 @@ using Microsoft.Data.Sqlite;
 using Dapper;
 using Roulette.Application.Interfaces;
 using Roulette.Domain;
+using System;
 
 namespace Roulette.Infrastructure.Repository
 {
@@ -32,21 +33,25 @@ namespace Roulette.Infrastructure.Repository
             return true;
         }
 
-        public async Task<IEnumerable<T>> GetAllAsync(string query)
+        public async Task<IEnumerable<T>> GetAllAsync(string query, object parameters = null)
         {
-            using var connection = new SqliteConnection(_appSettings.ConnectionString);
-            return await connection.QueryAsync<T>(query);
-        }
-        public async Task<dynamic> GetAll2Async(string query)
-        {
-            using var connection = new SqliteConnection(_appSettings.ConnectionString);
-            return await connection.QueryAsync(query);
+            try
+            {
+                using var connection = new SqliteConnection(_appSettings.ConnectionString);
+
+                return await connection.QueryAsync<T>(query, parameters);
+
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
         }
 
-        public async Task<T> Get(string query)
+        public async Task<T> Get(string query, object parameters = null)
         {
             using var connection = new SqliteConnection(_appSettings.ConnectionString);
-            return await connection.QueryFirstAsync<T>(query);
+            return await connection.QueryFirstAsync<T>(query, parameters);
         }
 
         public async Task UpdateAsync(string query, T entity)

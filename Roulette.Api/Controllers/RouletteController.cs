@@ -1,10 +1,12 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Roulette.Application.Commands.Payout;
 using Roulette.Application.Commands.PlaceBet;
 using Roulette.Application.Commands.Spin;
 using Roulette.Application.Queries.ShowPreviousSpins;
+using Roulette.Domain;
 
 namespace Roulette.Api.Controllers
 {
@@ -19,27 +21,27 @@ namespace Roulette.Api.Controllers
         }
 
         [HttpPost("placebet")]
-        public Task<IActionResult> PlaceBet([FromBody] PlaceBetCommand request)
+        public Task PlaceBet([FromBody] PlaceBetCommand request)
         {
-            return Task.FromResult<IActionResult>(Ok(_mediator.Send(request)));
+            return _mediator.Send(request);
         }
 
         [HttpGet("spin")]
-        public async Task<IActionResult> Spin(SpinCommand request)
+        public async Task<BetType> Spin(SpinCommand request)
         {
-            return Ok(await _mediator.Send(request));
+            return await _mediator.Send(request);
         }
 
         [HttpGet("show-previous-spins")]
-        public Task<IActionResult> ShowPreviousSpins(GetPreviousSpinsQuery request)
+        public Task<IEnumerable<SpinHistory>> ShowPreviousSpins(GetPreviousSpinsQuery request)
         {
-            return Task.FromResult<IActionResult>(Ok(_mediator.Send(request)));
+            return _mediator.Send(request);
         }
 
         [HttpPost("payout")]
-        public Task<IActionResult> Payout([FromBody] PayoutCommand request)
+        public Task<PayoutResponse> Payout([FromBody] PayoutCommand request)
         {
-            return Task.FromResult<IActionResult>(Ok(_mediator.Send(request)));
+            return _mediator.Send(request);
         }
     }
 }

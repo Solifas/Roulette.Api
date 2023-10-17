@@ -35,8 +35,8 @@ namespace Roulette.Application.Commands.Payout
 
                 var payout = new PayOut
                 {
-                    Id = Guid.NewGuid(),
-                    UserId = user.UserId,
+                    Id = Guid.NewGuid().ToString(),
+                    UserId = user.Id,
                     Amount = request.Amount,
                     IsRetreived = true
                 };
@@ -44,7 +44,7 @@ namespace Roulette.Application.Commands.Payout
                 _payoutRepository.AddAsync(insertPayoutQuery, payout);
                 return new PayoutResponse
                 {
-                    UserId = user.UserId,
+                    UserId = user.Id,
                     Amount = request.Amount,
                     BetId = request.BetId
                 };

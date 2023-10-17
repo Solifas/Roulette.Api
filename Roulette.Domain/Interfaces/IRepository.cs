@@ -8,8 +8,8 @@ namespace Roulette.Application.Interfaces
     {
         Task<bool> AddAsync(string query, T item);
         Task<bool> DeleteAsync(string query, T item);
-        Task<IEnumerable<T>> GetAllAsync(string query);
-        Task<T> Get(string query);
+        Task<IEnumerable<T>> GetAllAsync(string query, object parameters = null);
+        Task<T> Get(string query, object parameters = null);
         Task UpdateAsync(string query, T item);
     }
 }

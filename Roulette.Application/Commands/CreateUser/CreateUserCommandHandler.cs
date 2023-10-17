@@ -25,12 +25,12 @@ namespace Roulette.Application.Commands.CreateUser
 
             var user = new User
             {
-                UserId = Guid.NewGuid(),
+                Id = Guid.NewGuid().ToString(),
                 UserName = request.UserName,
                 Balance = request.Balance
             };
 
-            var insertUserQuery = "INSERT INTO Users (UserId, UserName, Balance) VALUES (@UserId, @UserName, @Balance)";
+            var insertUserQuery = "INSERT INTO Users (Id, UserName, Balance) VALUES (@Id, @UserName, @Balance)";
             try
             {
                 await _userRepository.AddAsync(insertUserQuery, user);

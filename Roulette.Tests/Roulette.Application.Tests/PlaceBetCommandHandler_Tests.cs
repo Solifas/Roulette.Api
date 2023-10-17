@@ -38,7 +38,7 @@ namespace Roulette.Tests.Roulette.Application.Tests
             var mockUserRepo = new Mock<IRepository<User>>();
 
             mockBetEngine.Setup(x => x.PlaceBet(BetType.Even, It.IsAny<Guid>(), command.Amount)).Returns(betCreated);
-            mockUserRepo.Setup(x => x.Get(It.IsAny<string>())).ReturnsAsync(new User { UserId = Guid.NewGuid(), UserName = command.UserName, Balance = 100M });
+            mockUserRepo.Setup(x => x.Get(It.IsAny<string>())).ReturnsAsync(new User { Id = Guid.NewGuid(), UserName = command.UserName, Balance = 100M });
 
             var handler = new PlaceBetCommandHandler(mockBetEngine.Object, mockBetHistoryRepo.Object, mockBetRepo.Object, mockUserRepo.Object);
 

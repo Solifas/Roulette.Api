@@ -28,38 +28,39 @@ namespace Roulette.Infrastructure.Database
             connection.Open();
             connection.Execute(@"
                     CREATE TABLE Users (
-                        Id UNIQUEIDENTIFIER PRIMARY KEY,
+                        Id NVARCHAR(36) PRIMARY KEY,                        
                         Username NVARCHAR(255) NOT NULL,
-                        Balance INT NOT NULL,
-                        BetType INT NOT NULL
+                        Balance INT NOT NULL
                     );
 
                     CREATE TABLE Bets (
-                        Id UNIQUEIDENTIFIER PRIMARY KEY,
+                        Id NVARCHAR(36) PRIMARY KEY,
                         UserId INT NOT NULL,
                         Amount INT NOT NULL,
-                        BetType BIT NOT NULL,
+                        BetType INT NOT NULL,
+                        IsBetConcluded BIT NOT NULL,
+                        IsBetWon BIT NOT NULL,
                         FOREIGN KEY (UserID) REFERENCES Users (ID)
                     );
 
                     CREATE TABLE SpinHistory (
-                        Id UNIQUEIDENTIFIER PRIMARY KEY,
-                        BetType BIT NOT NULL,
+                        Id NVARCHAR(36) PRIMARY KEY,
+                        BetType INT NOT NULL,
                         SpinDate DATETIME  NULL
                     );
                     
                     CREATE TABLE PayOuts(
-                        Id UNIQUEIDENTIFIER PRIMARY KEY,
+                        Id NVARCHAR(36) PRIMARY KEY,
                         UserId INT NOT NULL,
                         Amount INT NOT NULL,
                         IsRetreived BIT NOT NULL
                     );
 
                     CREATE TABLE BetHistory (
-                        Id UNIQUEIDENTIFIER PRIMARY KEY,
+                        Id NVARCHAR(36) PRIMARY KEY,
                         UserId INT NOT NULL,
                         BetId INT NOT NULL,
-                        FOREIGN KEY (UserId) REFERENCES Users(UserId),
+                        FOREIGN KEY (UserId) REFERENCES Users(Id),
                         FOREIGN KEY (BetId) REFERENCES Bets(Id)
                     );
                     "

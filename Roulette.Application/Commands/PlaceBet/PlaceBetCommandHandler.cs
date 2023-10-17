@@ -23,32 +23,44 @@ namespace Roulette.Application.Commands.PlaceBet
             _betRepository = betRepository;
             _userRepository = userRepository;
         }
+
         public async Task Handle(PlaceBetCommand request, CancellationToken cancellationToken)
         {
             try
             {
                 var validator = await new PlaceBetValidator().ValidateAsync(request, cancellationToken);
                 if (validator.Errors.Count > 0) throw new ValidationException(validator);
+                var getUserParams = new { UserName = request.UserName };
+                var getUser = $"SELECT Id, UserName, Balance FROM Users where UserName = @UserName";
+                var user = await _userRepository.Get(getUser, getUserParams);
+                if (user == null) throw new NotFoundException("The username entered is not valid");
 
-                var getUser = "SELECT * FROM Users where id = @id";
-                var user = await _userRepository.Get(getUser);
-
-                var bet = _betEngine.PlaceBet(request.BetType, user.UserId, request.Amount);
+                if (request.Amount > user.Balance) throw new BadRequestException("The bet exceeds your amount");
+                var bet = _betEngine.PlaceBet(request.BetType, user.Id, request.Amount);
                 var betHistory = new BetHistory
                 {
-                    UserId = user.UserId,
+                    UserId = user.Id,
                     BetId = bet.Id,
                 };
 
-                string betQuery = "INSERT INTO Bet (Id, Amount, UserId, BetType) VALUES (@Id, @Amount, @UserId, @BetType)";
-                string betHistoryQuery = "INSERT INTO BetHistory (Id, UserId, BetId) VALUES (@Id, @UserId, @BetId)";
+                string betQuery = "INSERT INTO Bets (Id, Amount,IsBetConcluded, IsBetWon, UserId, BetType) VALUES (@Id, @Amount,@IsBetConcluded ,@IsBetWon, @UserId, @BetType)";
+                string betHistoryQuery = "INSERT INTO BetHistory (UserId, BetId) VALUES (@UserId, @BetId)";
                 await _betRepository.AddAsync(betQuery, bet);
                 await _betHistoryRepository.AddAsync(betHistoryQuery, betHistory);
+
+                UpdateUserBalance(user, bet.Amount);
             }
             catch (Exception ex)
             {
                 throw new Exception("There was an error placing the bet", ex);
             }
+        }
+
+        private async Task UpdateUserBalance(User user, decimal betAmount)
+        {
+            var updateUserQuery = "UPDATE Users SET Balance = @Balance WHERE Id = @Id";
+            user.Balance -= betAmount;
+            _userRepository.UpdateAsync(updateUserQuery, user);
         }
     }
 }

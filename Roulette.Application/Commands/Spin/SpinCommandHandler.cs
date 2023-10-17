@@ -26,8 +26,8 @@ namespace Roulette.Application.Commands.Spin
                 var betType = await _betEngine.Spin();
                 var spinHistory = new SpinHistory
                 {
+                    Id = Guid.NewGuid().ToString(),
                     BetType = betType,
-                    Id = Guid.NewGuid(),
                     SpinDate = DateTime.UtcNow
                 };
                 string saveSpinQuery = "INSERT INTO SpinHistory (Id, BetType, SpinDate) VALUES (@Id, @BetType, @SpinDate)";

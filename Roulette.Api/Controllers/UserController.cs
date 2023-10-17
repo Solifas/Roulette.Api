@@ -17,7 +17,7 @@ namespace Roulette.Api.Controllers
         }
 
         [HttpPost("create-user")]
-        public Task<IActionResult> CreateUserCommand(CreateUserCommand request)
+        public Task<IActionResult> CreateUserCommand([FromBody] CreateUserCommand request)
         {
             return Task.FromResult<IActionResult>(Ok(_mediator.Send(request)));
         }
