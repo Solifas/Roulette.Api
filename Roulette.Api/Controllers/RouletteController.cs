@@ -19,7 +19,7 @@ namespace Roulette.Api.Controllers
         }
 
         [HttpPost("placebet")]
-        public Task<IActionResult> PlaceBet(PlaceBetCommand request)
+        public Task<IActionResult> PlaceBet([FromBody] PlaceBetCommand request)
         {
             return Task.FromResult<IActionResult>(Ok(_mediator.Send(request)));
         }
@@ -36,8 +36,8 @@ namespace Roulette.Api.Controllers
             return Task.FromResult<IActionResult>(Ok(_mediator.Send(request)));
         }
 
-        [HttpGet("payout")]
-        public Task<IActionResult> Payout(PayoutCommand request)
+        [HttpPost("payout")]
+        public Task<IActionResult> Payout([FromBody] PayoutCommand request)
         {
             return Task.FromResult<IActionResult>(Ok(_mediator.Send(request)));
         }

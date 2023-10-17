@@ -23,4 +23,3 @@ namespace Roulette.Api.Controllers
         }
     }
 }
-
