@@ -64,5 +64,3 @@ namespace Roulette.Api
         }
     }
 }
-
-Setu
