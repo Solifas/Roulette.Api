@@ -28,19 +28,14 @@ namespace Roulette.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            var configuration = new ConfigurationBuilder()
-            .SetBasePath(Directory.GetCurrentDirectory())
-            .AddJsonFile("appsettings.json", optional: false)
-            .Build();
-            var appSettings = new AppSettings();
-            configuration.Bind(appSettings);
+            var appSettings = Configuration.GetSection("AppSettings").Get<AppSettings>();
+            services.AddSingleton(appSettings);
             services.AddSingleton<IAppSettings>(appSettings);
 
             services.AddTransient<IBetEngine, BetEngine>();
             services.AddTransient(typeof(IRepository<>), typeof(BaseRepository<>));
 
             services.AddSingleton<IDatabaseSetup, DatabaseSetup>();
-            services.AddSingleton<IAppSettings, AppSettings>();
 
             services.AddControllers();
             services.AddSwaggerGen(c =>
