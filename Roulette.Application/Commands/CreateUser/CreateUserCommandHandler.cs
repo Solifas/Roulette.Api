@@ -21,7 +21,7 @@ namespace Roulette.Application.Commands.CreateUser
         {
             var validator = await new CreateUserValidator().ValidateAsync(request, cancellationToken);
 
-            if (validator.Errors.Count > 0) throw new ValidationException(validator);  
+            if (validator.Errors.Count > 0) throw new ValidationException(validator);
 
             var user = new User
             {

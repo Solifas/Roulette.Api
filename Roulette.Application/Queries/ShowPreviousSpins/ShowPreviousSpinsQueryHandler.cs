@@ -24,13 +24,13 @@ namespace Roulette.Application.Queries.ShowPreviousSpins
             try
             {
                 var result = await _betEngine.ShowPreviousSpins();
-            return result;
+                return result;
             }
             catch (Exception ex)
             {
                 throw new Exception("There was an error getting the previous spins", ex);
             }
-            
+
         }
     }
 }

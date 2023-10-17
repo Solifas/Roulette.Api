@@ -27,10 +27,9 @@ namespace Roulette.Application.Commands.PlaceBet
         {
             try
             {
-                // validation here
                 var validator = await new PlaceBetValidator().ValidateAsync(request, cancellationToken);
                 if (validator.Errors.Count > 0) throw new ValidationException(validator);
-                // Query to get a user with the userName below
+
                 var getUser = "SELECT * FROM Users where id = @id";
                 var user = await _userRepository.Get(getUser);
 
@@ -45,7 +44,6 @@ namespace Roulette.Application.Commands.PlaceBet
                 string betHistoryQuery = "INSERT INTO BetHistory (Id, UserId, BetId) VALUES (@Id, @UserId, @BetId)";
                 await _betRepository.AddAsync(betQuery, bet);
                 await _betHistoryRepository.AddAsync(betHistoryQuery, betHistory);
-
             }
             catch (Exception ex)
             {

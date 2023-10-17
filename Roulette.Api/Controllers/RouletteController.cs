@@ -8,6 +8,7 @@ using Roulette.Application.Queries.ShowPreviousSpins;
 
 namespace Roulette.Api.Controllers
 {
+    [Route("api/[controller]")]
     public class RouletteController : Controller
     {
         private readonly IMediator _mediator;

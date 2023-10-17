@@ -3,7 +3,6 @@ namespace Roulette.Domain
 {
     public class Bet
     {
-
         public Guid Id { get; set; }
         public Decimal Amount { get; set; }
         public bool IsBetConcluded { get; set; }

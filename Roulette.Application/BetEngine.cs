@@ -15,12 +15,14 @@ namespace Roulette.Application
         private readonly IRepository<User> _userRepository;
         private readonly IRepository<Bet> _betRepository;
         private readonly IRepository<SpinHistory> _spinRepository;
+        readonly IAppSettings _appSettings;
 
-        public BetEngine(IRepository<User> userRepository, IRepository<Bet> betRepository, IRepository<SpinHistory> spinRepository)
+        public BetEngine(IRepository<User> userRepository, IRepository<Bet> betRepository, IRepository<SpinHistory> spinRepository, IAppSettings appSettings)
         {
             _userRepository = userRepository;
             _betRepository = betRepository;
             _spinRepository = spinRepository;
+            _appSettings = appSettings;
         }
         public decimal CalculatePayout(BetType betType, decimal amount)
         {
@@ -59,7 +61,7 @@ namespace Roulette.Application
 
         public async Task<BetType> Spin()
         {
-            await Task.Delay(2000);
+            await Task.Delay(_appSettings.TimeOfSpinInSeconds);
             return EnumExtensions.GetRandomEnumValue<BetType>();
         }
 

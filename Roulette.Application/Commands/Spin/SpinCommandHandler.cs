@@ -12,7 +12,6 @@ namespace Roulette.Application.Commands.Spin
     {
         private readonly IBetEngine _betEngine;
         private readonly IRepository<SpinHistory> _spinHistoryRepository;
-        private readonly ILogger _logger;
 
         public SpinCommandHandler(IBetEngine betEngine, IRepository<SpinHistory> spinHistoryRepository)
         {
@@ -40,8 +39,7 @@ namespace Roulette.Application.Commands.Spin
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "There was an error spinning the Roulette");
-                throw;
+                throw new Exception("There was an error spining the wheel.", ex);
             }
         }
     }
