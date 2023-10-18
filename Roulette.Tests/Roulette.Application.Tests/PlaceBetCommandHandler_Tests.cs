@@ -26,7 +26,7 @@ namespace Roulette.Tests.Roulette.Application.Tests
 
             var betCreated = new Bet
             {
-                Id = Guid.NewGuid(),
+                Id = Guid.NewGuid().ToString(),
                 BetType = BetType.Even,
                 Amount = 10
             };
@@ -37,8 +37,8 @@ namespace Roulette.Tests.Roulette.Application.Tests
             var mockBetRepo = new Mock<IRepository<Bet>>();
             var mockUserRepo = new Mock<IRepository<User>>();
 
-            mockBetEngine.Setup(x => x.PlaceBet(BetType.Even, It.IsAny<Guid>(), command.Amount)).Returns(betCreated);
-            mockUserRepo.Setup(x => x.Get(It.IsAny<string>())).ReturnsAsync(new User { Id = Guid.NewGuid(), UserName = command.UserName, Balance = 100M });
+            mockBetEngine.Setup(x => x.PlaceBet(BetType.Even, It.IsAny<string>(), command.Amount)).Returns(betCreated);
+            mockUserRepo.Setup(x => x.Get(It.IsAny<string>(), null)).ReturnsAsync(new User { Id = Guid.NewGuid().ToString(), UserName = command.UserName, Balance = 100M });
 
             var handler = new PlaceBetCommandHandler(mockBetEngine.Object, mockBetHistoryRepo.Object, mockBetRepo.Object, mockUserRepo.Object);
 
@@ -46,7 +46,7 @@ namespace Roulette.Tests.Roulette.Application.Tests
             await handler.Handle(command, default);
 
             // Assert
-            mockBetEngine.Verify(x => x.PlaceBet(BetType.Even, It.IsAny<Guid>(), command.Amount), Times.Once);
+            mockBetEngine.Verify(x => x.PlaceBet(BetType.Even, It.IsAny<Guid>().ToString(), command.Amount), Times.Once);
         }
     }
 }

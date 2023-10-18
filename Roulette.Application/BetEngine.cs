@@ -92,7 +92,7 @@ namespace Roulette.Application
                 await _betRepository.UpdateAsync(betQuery, bet);
             }
 
-            var getAllWinningUsersQuery = "SELECT DISTINCT * FROM Users LEFT JOIN Bets ON Users.Id = Bets.UserId WHERE Bets.IsBetWon = @IsBetWon AND Users.Id = Bets.UserId  LIMIT 1";
+            var getAllWinningUsersQuery = "SELECT DISTINCT * FROM Users LEFT JOIN Bets ON Users.Id = Bets.UserId WHERE Bets.IsBetWon = @IsBetWon AND Users.Id = Bets.UserId LIMIT 1";
             var getAllWinningUsersParams = new { IsBetWon = true };
             var winningUserAccounts = await _userRepository.GetAllAsync(getAllWinningUsersQuery, getAllWinningUsersParams);
             if (winningUserAccounts == null) return;

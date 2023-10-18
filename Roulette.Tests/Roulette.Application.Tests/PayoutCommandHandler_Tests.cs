@@ -16,13 +16,13 @@ namespace Roulette.Tests.Roulette.Application.Tests
         [Fact]
         public async Task PayoutCommandHandler_Success()
         {
-        var mockUserRepository = new Mock<IRepository<User>>();
-        var mockPayOutRepository = new Mock<IRepository<PayOut>>();
+            var mockUserRepository = new Mock<IRepository<User>>();
+            var mockPayOutRepository = new Mock<IRepository<PayOut>>();
 
             // Arrange
             var command = new PayoutCommand
             {
-                BetId = Guid.NewGuid(),
+                BetId = Guid.NewGuid().ToString(),
                 UserName = "TestUser",
                 Amount = 100M
             };
@@ -45,7 +45,7 @@ namespace Roulette.Tests.Roulette.Application.Tests
             var mockPayOutRepository = new Mock<IRepository<PayOut>>();
             var command = new PayoutCommand
             {
-                BetId = Guid.NewGuid(),
+                BetId = Guid.NewGuid().ToString(),
                 UserName = "",
                 Amount = 100M
             };
