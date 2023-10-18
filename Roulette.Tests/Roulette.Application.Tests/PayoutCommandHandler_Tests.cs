@@ -26,6 +26,7 @@ namespace Roulette.Tests.Roulette.Application.Tests
                 UserName = "TestUser",
                 Amount = 100M
             };
+            mockUserRepository.Setup(x => x.Get("Select * FROM Users WHERE Id = 10", null)).ReturnsAsync(new User());
             var handler = new PayoutCommandHandler(mockUserRepository.Object, mockPayOutRepository.Object);
 
             // Act
@@ -46,7 +47,7 @@ namespace Roulette.Tests.Roulette.Application.Tests
             var command = new PayoutCommand
             {
                 BetId = Guid.NewGuid().ToString(),
-                UserName = "",
+                UserName = "User",
                 Amount = 100M
             };
             var handler = new PayoutCommandHandler(mockUserRepository.Object, mockPayOutRepository.Object);

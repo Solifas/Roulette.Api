@@ -29,7 +29,7 @@ namespace Roulette.Application.Commands.Payout
                 if (validator.Errors.Count > 0) throw new ValidationException(validator);
 
                 var getUserByIdQuery = $"SELECT * FROM Users WHERE UserName = {request.UserName}";
-                var user = await _userAccountRepository.Get(getUserByIdQuery);
+                var user = await _userAccountRepository.Get(getUserByIdQuery, null);
                 if (user == null) throw new NotFoundException("User not found");
                 if (user.Balance < request.Amount) throw new BadRequestException("Insufficient funds");
 
