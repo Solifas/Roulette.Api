@@ -64,3 +64,8 @@ Bet types that can come out from a spin:
         FirstColumn,
         SecondColumn,
         ThirdColumn
+
+Challenges:
+- String not casting to Guid
+    - Temporary solution Update all Guids to String (Can do better Solie) :(
+    
