@@ -26,7 +26,11 @@ namespace Roulette.Tests.Roulette.Application.Tests
                 UserName = "TestUser",
                 Amount = 100M
             };
-            mockUserRepository.Setup(x => x.Get("Select * FROM Users WHERE Id = 10", null)).ReturnsAsync(new User());
+            mockUserRepository.Setup(x => x.Get(It.IsAny<string>(), null)).ReturnsAsync(new User
+            {
+                UserName = "Solifas",
+                Balance = 20000000M,
+            });
             var handler = new PayoutCommandHandler(mockUserRepository.Object, mockPayOutRepository.Object);
 
             // Act
@@ -47,16 +51,15 @@ namespace Roulette.Tests.Roulette.Application.Tests
             var command = new PayoutCommand
             {
                 BetId = Guid.NewGuid().ToString(),
-                UserName = "User",
                 Amount = 100M
             };
             var handler = new PayoutCommandHandler(mockUserRepository.Object, mockPayOutRepository.Object);
 
             // Act
-            var exception = await Assert.ThrowsAsync<ValidationException>(() => handler.Handle(command, default));
+            var exception = await Assert.ThrowsAsync<Exception>(() => handler.Handle(command, default));
 
             // Assert
-            Assert.Equal("UserName is required.", exception.ValidationErrors.FirstOrDefault());
+            Assert.Equal("Unable to make a payout", exception.Message);
         }
     }
 }

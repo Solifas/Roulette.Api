@@ -14,7 +14,7 @@ namespace Roulette.Tests.Roulette.Application.Tests
     public class PlaceBetCommandHandler_Tests
     {
         [Fact]
-        public async Task Handle_WhenCalledWithValidCommand_ShouldReturnBetId()
+        public async Task Handle_WhenAmmount_Exceeds_Balance()
         {
             // Arrange
             var command = new PlaceBetCommand
@@ -38,15 +38,16 @@ namespace Roulette.Tests.Roulette.Application.Tests
             var mockUserRepo = new Mock<IRepository<User>>();
 
             mockBetEngine.Setup(x => x.PlaceBet(BetType.Even, It.IsAny<string>(), command.Amount)).Returns(betCreated);
-            mockUserRepo.Setup(x => x.Get(It.IsAny<string>(), null)).ReturnsAsync(new User { Id = Guid.NewGuid().ToString(), UserName = command.UserName, Balance = 100M });
+            mockUserRepo.Setup(x => x.Get(It.IsAny<string>(), It.IsAny<object>())).ReturnsAsync(new User { Balance = 5, UserName = It.IsAny<string>() });
 
             var handler = new PlaceBetCommandHandler(mockBetEngine.Object, mockBetHistoryRepo.Object, mockBetRepo.Object, mockUserRepo.Object);
 
             // Act
-            await handler.Handle(command, default);
+            var exception = await Assert.ThrowsAsync<Exception>(() => handler.Handle(command, default));
 
             // Assert
-            mockBetEngine.Verify(x => x.PlaceBet(BetType.Even, It.IsAny<Guid>().ToString(), command.Amount), Times.Once);
+            Assert.Equal("The bet exceeds your amount", exception.InnerException.Message);
+
         }
     }
 }
